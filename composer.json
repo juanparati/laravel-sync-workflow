@@ -1,0 +1,47 @@
+{
+    "name": "juanparati/laravel-sync-workflow",
+    "description": "A library for executing synchronous workflows in Laravel",
+    "keywords": ["laravel", "workflow", "synchronous", "event sourcing"],
+    "type": "library",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Juan Lago",
+            "email": "juanparati@gmail.com"
+        }
+    ],
+    "minimum-stability": "stable",
+    "require": {
+        "php": ">=8.3",
+        "ext-pdo": "*",
+        "illuminate/support": ">=11.1",
+        "ramsey/uuid": "^4.7"
+    },
+    "require-dev": {
+        "phpunit/phpunit": "^11.5",
+        "orchestra/testbench": "^10.4",
+        "laravel/pint": "^1.22"
+    },
+    "autoload": {
+        "psr-4": {
+            "Juanparati\\SyncWorkflow\\": "src/"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "Juanparati\\SyncWorkflow\\Test\\": "test"
+        }
+    },
+    "extra": {
+        "laravel": {
+            "providers": [
+                "Juanparati\\SyncWorkflow\\Providers\\SyncWorkflowProvider"
+            ]
+        }
+    },
+    "scripts": {
+        "test": [
+            "@php vendor/bin/phpunit"
+        ]
+    }
+}
