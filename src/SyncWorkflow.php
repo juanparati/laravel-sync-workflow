@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 namespace Juanparati\SyncWorkflow;
@@ -8,7 +9,6 @@ use Juanparati\SyncWorkflow\Contracts\Workflow;
 
 abstract class SyncWorkflow implements Workflow
 {
-
     use SerializesModels;
 
     /**
@@ -16,19 +16,15 @@ abstract class SyncWorkflow implements Workflow
      */
     private ?SyncExecutor $_executor = null;
 
-
     /**
      * Get/Set Executor.
-     *
-     * @param SyncExecutor|null $executor
-     * @return SyncExecutor
      */
     final public function executor(?SyncExecutor $executor = null): SyncExecutor
     {
-        if ($executor)
+        if ($executor) {
             $this->_executor = $executor;
+        }
 
         return $this->_executor;
     }
-
 }

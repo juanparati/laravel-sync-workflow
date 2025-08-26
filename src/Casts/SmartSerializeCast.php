@@ -9,7 +9,6 @@ use Juanparati\SyncWorkflow\Casts\SmartSerializationCast\SmartSerializeForModel;
 
 class SmartSerializeCast implements CastsAttributes
 {
-
     public function get(Model $model, string $key, mixed $value, array $attributes): mixed
     {
         if (is_null($value)) {
@@ -17,7 +16,7 @@ class SmartSerializeCast implements CastsAttributes
         }
 
         return $this->decodeAll(
-            unserialize((new ConditionalCryptCast())->get($model, $key, $value,$attributes))
+            unserialize((new ConditionalCryptCast)->get($model, $key, $value, $attributes))
         );
     }
 
@@ -27,7 +26,7 @@ class SmartSerializeCast implements CastsAttributes
             return null;
         }
 
-        return (new ConditionalCryptCast())->set(
+        return (new ConditionalCryptCast)->set(
             $model, $key, serialize($this->encodeAll($value)), $attributes
         );
     }

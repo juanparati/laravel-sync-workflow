@@ -20,5 +20,5 @@ return [
     | Encrypt data used by event source data.
     |
     */
-    'encrypt' => false
+    'encrypt' => false,
 ];

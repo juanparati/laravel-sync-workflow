@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 namespace Juanparati\SyncWorkflow\Concerns;
@@ -70,7 +71,7 @@ trait HasEventSourcing
         $relativeTime = $this->startedAt;
 
         if ($this->workflowState) {
-            $relativeTime =  $this->startedAt->addMicroseconds(
+            $relativeTime = $this->startedAt->addMicroseconds(
                 now()->diffInMicroseconds($this->workflowState->first_started_at)
             );
         }

@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 namespace Juanparati\SyncWorkflow;
@@ -22,7 +23,7 @@ final class SyncExecutor
     /**
      * Workflow instance.
      */
-    protected ?Workflow $workflow;
+    protected ?Workflow $workflow = null;
 
     /**
      * Activity results.
@@ -44,13 +45,10 @@ final class SyncExecutor
      */
     protected ?CarbonInterface $endedAt = null;
 
-
     /**
      * Features used by the workflow.
-     * @var array
      */
     protected array $features = [];
-
 
     /**
      * Constructor.
@@ -84,18 +82,19 @@ final class SyncExecutor
      */
     public function start(): SyncExecutor
     {
-        if (!$this->workflow) {
+        if (! $this->workflow) {
             throw new \RuntimeException('Workflow not defined, use the load() method before calling start().');
         }
 
-        if ($this->workflow instanceof WithEventSourcing)
+        if ($this->workflow instanceof WithEventSourcing) {
             $this->features[] = 'HasEventSourcing';
+        }
 
         $this->startedAt = now()->toImmutable();
         $this->callHook('onStart');
         $this->workflow->executor($this);
         $this->finalResult = $this->workflow->handle();
-        $this->endedAt     = now()->toImmutable();
+        $this->endedAt = now()->toImmutable();
         $this->callHook('onEnded');
 
         return $this;
@@ -133,8 +132,8 @@ final class SyncExecutor
     public function getExecutionTime(): array
     {
         return [
-            'startedAt'    => $this->startedAt,
-            'endedAt'      => $this->endedAt,
+            'startedAt' => $this->startedAt,
+            'endedAt' => $this->endedAt,
             'durationTime' => $this->startedAt->diffInUTCMicros($this->endedAt),
         ];
     }
@@ -147,33 +146,32 @@ final class SyncExecutor
      */
     public function runActivity(
         string|\Closure $activityClass,
-        array           $params = [],
-        bool            $stopOnFail = true,
-        ?\Closure       $onFail = null
-    ): mixed
-    {
+        array $params = [],
+        bool $stopOnFail = true,
+        ?\Closure $onFail = null
+    ): mixed {
         $exception = null;
 
         $activityResult = [
-            'id'          => Uuid::uuid7()->toString(),
-            'params'      => $params,
-            'started_at'  => now()->getTimestampMs(),
+            'id' => Uuid::uuid7()->toString(),
+            'params' => $params,
+            'started_at' => now()->getTimestampMs(),
             'finished_at' => null,
-            'result'      => null,
-            'backtrace'   => null,
-            'sequence'    => count($this->activityResults),
+            'result' => null,
+            'backtrace' => null,
+            'sequence' => count($this->activityResults),
         ];
 
         if (is_callable($activityClass)) {
-            $closureResult              = null;
-            $activityResult['activity'] = 'Closure #' . $activityResult['sequence'];
+            $closureResult = null;
+            $activityResult['activity'] = 'Closure #'.$activityResult['sequence'];
 
             try {
                 $closureResult = $activityClass(...$params);
             } catch (SyncWorkflowControlledException $e) {
                 $closureResult = $e;
             } catch (\Throwable $e) {
-                $exception                   = $e;
+                $exception = $e;
                 $activityResult['backtrace'] = $e->getTrace();
             }
 
@@ -186,20 +184,20 @@ final class SyncExecutor
             $activity = new $activityClass(...$params);
             $activity->executor($this);
             $activityResult['activity'] = get_class($activity);
-            $activityResult['params']   = $capturedArgs;
+            $activityResult['params'] = $capturedArgs;
 
             try {
                 $activityResult['result'] = $activity->handle();
             } catch (SyncWorkflowControlledException $e) {
                 $activityResult['result'] = $e;
             } catch (\Throwable $e) {
-                $exception                   = $e;
+                $exception = $e;
                 $activityResult['backtrace'] = $e->getTrace();
             }
         }
 
         $activityResult['finished_at'] = now()->getTimestampMs();
-        $this->activityResults[]       = $activityResult;
+        $this->activityResults[] = $activityResult;
         $this->callHook('onRegisterActivity', $activityResult);
 
         if ($exception) {
@@ -228,8 +226,7 @@ final class SyncExecutor
     public function runChainedActivities(
         array $activities,
         mixed $mainParam = null,
-    ): mixed
-    {
+    ): mixed {
         foreach ($activities as $activity) {
 
             if ($activity instanceof SyncChainedActivity) {
@@ -272,17 +269,17 @@ final class SyncExecutor
 
         // Ensure the class has a constructor
         $constructor = $reflector->getConstructor();
-        if (!$constructor) {
+        if (! $constructor) {
             throw new \Exception("No constructor found for class $className");
         }
 
         // Get the parameters of the constructor
-        $parameters   = $constructor->getParameters();
+        $parameters = $constructor->getParameters();
         $capturedArgs = [];
 
         // Map the parameters to the passed arguments
         foreach ($parameters as $index => $parameter) {
-            $name                = $parameter->getName();
+            $name = $parameter->getName();
             $capturedArgs[$name] = $args[$index] ?? null; // Capture value or null if not provided
         }
 
@@ -295,9 +292,8 @@ final class SyncExecutor
     private function callHook(string $method, mixed ...$params): void
     {
         foreach ($this->features as $feature) {
-            $methodName = $method . ucfirst($feature);
+            $methodName = $method.ucfirst($feature);
             $this->{$methodName}($params);
         }
     }
-
 }

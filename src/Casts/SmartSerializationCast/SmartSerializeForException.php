@@ -9,12 +9,12 @@ class SmartSerializeForException
     public function __construct(\Exception $exception)
     {
         $this->exception = [
-            'class'   => get_class($exception),
-            'trace'   => $exception->getTraceAsString(),
+            'class' => get_class($exception),
+            'trace' => $exception->getTraceAsString(),
             'message' => $exception->getMessage(),
-            'code'    => $exception->getCode(),
-            'file'    => $exception->getFile(),
-            'line'    => $exception->getLine(),
+            'code' => $exception->getCode(),
+            'file' => $exception->getFile(),
+            'line' => $exception->getLine(),
         ];
     }
 
@@ -32,5 +32,4 @@ class SmartSerializeForException
     {
         return $this->exception;
     }
-
 }

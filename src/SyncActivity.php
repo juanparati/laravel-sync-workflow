@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 namespace Juanparati\SyncWorkflow;
@@ -14,14 +15,12 @@ abstract class SyncActivity implements Activity
 
     /**
      * Get/Set Executor.
-     *
-     * @param SyncExecutor|null $executor
-     * @return SyncExecutor
      */
     final public function executor(?SyncExecutor $executor = null): SyncExecutor
     {
-        if ($executor)
+        if ($executor) {
             $this->_executor = $executor;
+        }
 
         return $this->_executor;
     }

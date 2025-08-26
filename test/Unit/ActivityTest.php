@@ -19,8 +19,6 @@ class ActivityTest extends SyncWorkflowTestBase
         $this->assertEquals(2, $result);
     }
 
-
-
     public function test_workflow_with_chained_activities()
     {
         $result = SyncExecutor::make()

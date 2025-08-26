@@ -12,6 +12,8 @@
         </include>
     </source>
     <php>
+        <env name="LIB_PROJECT" value="laravel-sync-workflow" />
+        <env name="APP_ENV" value="testing" />
         <env name="DB_CONNECTION" value="testing"/>
     </php>
 </phpunit>

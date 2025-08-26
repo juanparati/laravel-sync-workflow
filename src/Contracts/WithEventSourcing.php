@@ -2,7 +2,4 @@
 
 namespace Juanparati\SyncWorkflow\Contracts;
 
-interface WithEventSourcing
-{
-
-}
+interface WithEventSourcing {}

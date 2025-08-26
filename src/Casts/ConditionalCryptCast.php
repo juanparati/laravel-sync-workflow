@@ -13,16 +13,18 @@ class ConditionalCryptCast implements CastsAttributes
     {
         $val = str($value);
 
-        if ($val->startsWith(static::CRYPT_PREFIX))
+        if ($val->startsWith(static::CRYPT_PREFIX)) {
             return decrypt($val->after(static::CRYPT_PREFIX)->toString());
+        }
 
         return $value;
     }
 
     public function set(Model $model, string $key, mixed $value, array $attributes): mixed
     {
-        if (config('sync-workflow.encrypt'))
-            return static::CRYPT_PREFIX . encrypt($value);
+        if (config('sync-workflow.encrypt')) {
+            return static::CRYPT_PREFIX.encrypt($value);
+        }
 
         return $value;
     }

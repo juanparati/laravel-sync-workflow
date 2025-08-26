@@ -4,8 +4,8 @@ namespace Juanparati\SyncWorkflow\Test\Unit;
 
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Juanparati\SyncWorkflow\Casts\ConditionalCryptCast;
-use Juanparati\SyncWorkflow\SyncExecutor;
 use Juanparati\SyncWorkflow\Models\SyncWorkflowState;
+use Juanparati\SyncWorkflow\SyncExecutor;
 use Juanparati\SyncWorkflow\Test\Fixtures\Workflows\TestEventSourcingWorkflow;
 use Juanparati\SyncWorkflow\Test\SyncWorkflowTestBase;
 
@@ -13,14 +13,8 @@ class EncryptedEventTest extends SyncWorkflowTestBase
 {
     use RefreshDatabase;
 
-
     public function test_encrypted_event()
     {
-        config(['app' => [
-            'key' => 'base64:jib6SGevl33TsmtQ29u5zfJzPL9pOqxiqxdSTUFldac=',
-            'cipher' => 'AES-256-CBC',
-        ]]);
-
         config(['sync-workflow' => ['encrypt' => true]]);
 
         $testWorkflow = new TestEventSourcingWorkflow(2);

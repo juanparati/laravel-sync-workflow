@@ -11,10 +11,10 @@ class RelativeTimeTest extends SyncWorkflowTestBase
     public function test_relative_time()
     {
         $result = SyncExecutor::make()
-            ->load(new TestRelativeTimeWorkflow())
+            ->load(new TestRelativeTimeWorkflow)
             ->start()
             ->getResult();
 
-        $this->assertEquals(now()->toDateTimeString(), $result->toDateTimeString());;
+        $this->assertEquals(now()->toDateTimeString(), $result->toDateTimeString());
     }
 }

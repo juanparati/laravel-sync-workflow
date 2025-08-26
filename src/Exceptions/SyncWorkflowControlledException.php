@@ -1,9 +1,8 @@
 <?php
+
 declare(strict_types=1);
 
 namespace Juanparati\SyncWorkflow\Exceptions;
-
-use Illuminate\Queue\SerializesModels;
 
 /**
  * Controlled exception for workflow.
@@ -17,7 +16,6 @@ class SyncWorkflowControlledException extends \Exception
         parent::__construct($message, $code);
         $this->setErrors($errors);
     }
-
 
     public function setErrors(array $errors): static
     {

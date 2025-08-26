@@ -49,6 +49,7 @@ class SmartSerializeForModel
     public function getInstance(): Model
     {
         $model = $this->modelClass;
+
         return (new $model)->setRawAttributes($this->modelAttributes);
     }
 }

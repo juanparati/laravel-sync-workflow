@@ -19,7 +19,6 @@ class ClosureActivityTest extends SyncWorkflowTestBase
         $this->assertEquals('testfoo', $result);
     }
 
-
     public function test_workflow_with_chained_activities()
     {
         $result = SyncExecutor::make()

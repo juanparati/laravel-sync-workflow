@@ -2,6 +2,4 @@
 
 namespace Juanparati\SyncWorkflow\Test\Fixtures\Workflows;
 
-class TestRelativeTimeEventSourcingWorkflow extends TestRelativeTimeWorkflow implements \Juanparati\SyncWorkflow\Contracts\WithEventSourcing
-{
-}
+class TestRelativeTimeEventSourcingWorkflow extends TestRelativeTimeWorkflow implements \Juanparati\SyncWorkflow\Contracts\WithEventSourcing {}

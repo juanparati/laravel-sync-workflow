@@ -2,7 +2,6 @@
 
 namespace Juanparati\SyncWorkflow\Test\Fixtures\Workflows;
 
-
 use Juanparati\SyncWorkflow\SyncWorkflow;
 
 class ClosureActivitiesTestWorkflow extends SyncWorkflow
@@ -14,8 +13,8 @@ class ClosureActivitiesTestWorkflow extends SyncWorkflow
         return $this->executor()
             ->runChainedActivities(
                 [
-                    fn() => 'st' . $this->myParam,
-                    fn($val) => 'te' . $val,
+                    fn () => 'st'.$this->myParam,
+                    fn ($val) => 'te'.$val,
                 ],
                 $this->myParam
             );

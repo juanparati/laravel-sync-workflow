@@ -11,7 +11,7 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create(config('laravel-sync-workflow.table_name', 'sync_workflow_states'), function (Blueprint $table) {
+        Schema::create(config('sync-workflow.table_name', 'sync_workflow_states'), function (Blueprint $table) {
             $table->uuid('id')->primary();
             $table->string('workflow');
             $table->longText('instance')->nullable()->comment('The workflow instance');
@@ -32,6 +32,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists(config('laravel-sync-workflow.table_name', 'sync_workflow_states'));
+        Schema::dropIfExists(config('sync-workflow.table_name', 'sync_workflow_states'));
     }
 };

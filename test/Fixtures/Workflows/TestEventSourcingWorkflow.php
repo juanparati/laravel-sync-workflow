@@ -15,7 +15,7 @@ class TestEventSourcingWorkflow extends SyncWorkflow implements \Juanparati\Sync
         return $this->executor()->runChainedActivities([
             MultiplyTwoActivity::class,
             SumOneActivity::class,
-            fn($val) => $val + 3
+            fn ($val) => $val + 3,
         ], $this->myParam);
     }
 }

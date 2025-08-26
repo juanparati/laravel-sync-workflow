@@ -4,8 +4,8 @@ namespace Juanparati\SyncWorkflow\Test\Unit;
 
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Juanparati\SyncWorkflow\Exceptions\SyncWorkflowControlledException;
-use Juanparati\SyncWorkflow\SyncExecutor;
 use Juanparati\SyncWorkflow\Models\SyncWorkflowState;
+use Juanparati\SyncWorkflow\SyncExecutor;
 use Juanparati\SyncWorkflow\Test\Fixtures\Workflows\TestControlledExceptionEventSourcingWorkflow;
 use Juanparati\SyncWorkflow\Test\Fixtures\Workflows\TestEventSourcingWorkflow;
 use Juanparati\SyncWorkflow\Test\Fixtures\Workflows\TestRelativeTimeEventSourcingWorkflow;
@@ -35,10 +35,9 @@ class EventSourceTest extends SyncWorkflowTestBase
         $this->assertEquals(0, $workflowState->attempts);
     }
 
-
     public function test_event_sourcing_time_workflow()
     {
-        $testWorkflow = new TestRelativeTimeEventSourcingWorkflow();
+        $testWorkflow = new TestRelativeTimeEventSourcingWorkflow;
 
         $result = SyncExecutor::make()
             ->load($testWorkflow)
@@ -55,7 +54,6 @@ class EventSourceTest extends SyncWorkflowTestBase
         $this->assertEquals($result->toDateTimeString(), $resultReplayed->toDateTimeString());
         $this->assertTrue($resultReplayed->lt(now()));
     }
-
 
     public function test_event_sourcing_workflow_with_chained_activities()
     {
@@ -76,5 +74,4 @@ class EventSourceTest extends SyncWorkflowTestBase
 
         $this->assertCount(1, $e->getErrors());
     }
-
 }

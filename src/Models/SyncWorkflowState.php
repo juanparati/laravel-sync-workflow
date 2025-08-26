@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 namespace Juanparati\SyncWorkflow\Models;
@@ -23,42 +24,41 @@ class SyncWorkflowState extends Model
     protected function casts(): array
     {
         return [
-            'activities'       => SmartSerializeCast::class,
-            'result'           => SmartSerializeCast::class,
-            'instance'         => ConditionalCryptCast::class,
-            'was_success'      => 'boolean',
+            'activities' => SmartSerializeCast::class,
+            'result' => SmartSerializeCast::class,
+            'instance' => ConditionalCryptCast::class,
+            'was_success' => 'boolean',
             'first_started_at' => 'datetime:Y-m-d H:i:s.u',
-            'started_at'       => 'datetime:Y-m-d H:i:s.u',
-            'finished_at'      => 'datetime:Y-m-d H:i:s.u',
+            'started_at' => 'datetime:Y-m-d H:i:s.u',
+            'finished_at' => 'datetime:Y-m-d H:i:s.u',
         ];
     }
 
     public function __construct(array $attributes = [])
     {
         parent::__construct($attributes);
-        $this->setTable(config('laravel-sync-workflow.table_name', 'sync_workflow_states'));
+        $this->setTable(config('sync-workflow.table_name', 'sync_workflow_states'));
     }
-
 
     /**
      * Replay workflow.
      */
     public function replay(): SyncExecutor
     {
-        if (!$this->id)
+        if (! $this->id) {
             throw new \RuntimeException('Workflow state not found.');
+        }
 
         return SyncExecutor::make($this->id)
             ->load($this->instance)
             ->start();
     }
 
-
     protected function instance(): Attribute
     {
         return Attribute::make(
-            get: fn($value) => unserialize((new ConditionalCryptCast())->get($this, 'instance', $value, $this->attributes)),
-            set: fn($value) => (new ConditionalCryptCast())->set($this, 'instance', serialize($value), $this->attributes),
+            get: fn ($value) => unserialize((new ConditionalCryptCast)->get($this, 'instance', $value, $this->attributes)),
+            set: fn ($value) => (new ConditionalCryptCast)->set($this, 'instance', serialize($value), $this->attributes),
         );
     }
 
@@ -68,7 +68,7 @@ class SyncWorkflowState extends Model
     protected function firstStartedAt(): Attribute
     {
         return Attribute::make(
-            set: fn($value) => $this->microTimeAttrFnc()($value)
+            set: fn ($value) => $this->microTimeAttrFnc()($value)
         );
     }
 
@@ -78,7 +78,7 @@ class SyncWorkflowState extends Model
     protected function startedAt(): Attribute
     {
         return Attribute::make(
-            set: fn($value) => $this->microTimeAttrFnc()($value)
+            set: fn ($value) => $this->microTimeAttrFnc()($value)
         );
     }
 
@@ -88,7 +88,7 @@ class SyncWorkflowState extends Model
     protected function finishedAt(): Attribute
     {
         return Attribute::make(
-            set: fn($value) => $this->microTimeAttrFnc()($value)
+            set: fn ($value) => $this->microTimeAttrFnc()($value)
         );
     }
 
@@ -97,6 +97,6 @@ class SyncWorkflowState extends Model
      */
     protected function microTimeAttrFnc(): \Closure
     {
-        return fn($value) => $value ? $value->format('Y-m-d H:i:s.u') : null;
+        return fn ($value) => $value ? $value->format('Y-m-d H:i:s.u') : null;
     }
 }
