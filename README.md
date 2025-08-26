@@ -15,3 +15,8 @@ It supports the following features:
 - Workflow replay
 
 
+## Installation
+
+```sh
+artisan vendor:publish --tag=laravel-sync-workflow
+```
