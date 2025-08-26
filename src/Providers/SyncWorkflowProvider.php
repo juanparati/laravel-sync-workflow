@@ -20,8 +20,6 @@ class SyncWorkflowProvider extends ServiceProvider
             'laravel-sync-workflow'
         );
 
-        $this->loadMigrationsFrom(__DIR__ . '/../../database/migrations');
-
         if ($this->app->runningInConsole()) {
 
             $this->commands([
