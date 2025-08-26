@@ -18,5 +18,17 @@ It supports the following features:
 ## Installation
 
 ```sh
+composer require juanparati/laravel-sync-workflow
+```
+
+Publish migrations and config file (Required for event sourcing):
+
+```sh
 artisan vendor:publish --tag=laravel-sync-workflow
+```
+
+Run migrations:
+
+```sh
+artisan migrate
 ```
