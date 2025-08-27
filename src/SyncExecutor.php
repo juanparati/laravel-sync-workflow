@@ -82,8 +82,8 @@ final class SyncExecutor
      */
     public function run(): SyncExecutor
     {
-        if (! $this->workflow) {
-            throw new \RuntimeException('Workflow not defined, use the load() method before calling start().');
+        if (!$this->workflow) {
+            throw new \RuntimeException('Workflow not defined, use the load() method before calling run().');
         }
 
         if ($this->workflow instanceof WithEventSourcing) {
@@ -94,7 +94,7 @@ final class SyncExecutor
         $this->callHook('onRun');
         $this->workflow->executor($this);
         $this->finalResult = $this->workflow->handle();
-        $this->endedAt = now()->toImmutable();
+        $this->endedAt     = now()->toImmutable();
         $this->callHook('onEnded');
 
         return $this;
@@ -132,8 +132,8 @@ final class SyncExecutor
     public function getExecutionTime(): array
     {
         return [
-            'startedAt' => $this->startedAt,
-            'endedAt' => $this->endedAt,
+            'startedAt'    => $this->startedAt,
+            'endedAt'      => $this->endedAt,
             'durationTime' => $this->startedAt->diffInUTCMicros($this->endedAt),
         ];
     }
@@ -141,37 +141,52 @@ final class SyncExecutor
     /**
      * Run activity.
      *
+     * @param  string|\Closure  $activityClass  SyncActivity class or closure
+     * @param  array<mixed>     $params         Activity parameters
+     * @param  bool             $stopOnFail     Stop entire workflow if activity fails
+     * @param  \Closure|null    $onFail         Callback on fail
+     * @param  bool             $decoupled      Clone objects passed into parameters
+     * @return mixed
      * @throws \ReflectionException
      * @throws \Throwable
      */
     public function runActivity(
         string|\Closure $activityClass,
-        array $params = [],
-        bool $stopOnFail = true,
-        ?\Closure $onFail = null
-    ): mixed {
+        array           $params = [],
+        bool            $stopOnFail = true,
+        ?\Closure       $onFail = null,
+        bool            $decoupled = true,
+    ): mixed
+    {
         $exception = null;
 
+        if ($decoupled) {
+            $params = array_map(
+                fn ($param) => is_object($param) ? clone $param : $param,
+                $params
+            );
+        }
+
         $activityResult = [
-            'id' => Uuid::uuid7()->toString(),
-            'params' => $params,
-            'started_at' => now()->getTimestampMs(),
+            'id'          => Uuid::uuid7()->toString(),
+            'params'      => $params,
+            'started_at'  => now()->getTimestampMs(),
             'finished_at' => null,
-            'result' => null,
-            'backtrace' => null,
-            'sequence' => count($this->activityResults),
+            'result'      => null,
+            'backtrace'   => null,
+            'sequence'    => count($this->activityResults),
         ];
 
         if (is_callable($activityClass)) {
-            $closureResult = null;
-            $activityResult['activity'] = 'Closure #'.$activityResult['sequence'];
+            $closureResult              = null;
+            $activityResult['activity'] = 'Closure #' . $activityResult['sequence'];
 
             try {
                 $closureResult = $activityClass(...$params);
             } catch (SyncWorkflowControlledException $e) {
                 $closureResult = $e;
             } catch (\Throwable $e) {
-                $exception = $e;
+                $exception                   = $e;
                 $activityResult['backtrace'] = $e->getTrace();
             }
 
@@ -184,20 +199,20 @@ final class SyncExecutor
             $activity = new $activityClass(...$params);
             $activity->executor($this);
             $activityResult['activity'] = get_class($activity);
-            $activityResult['params'] = $capturedArgs;
+            $activityResult['params']   = $capturedArgs;
 
             try {
                 $activityResult['result'] = $activity->handle();
             } catch (SyncWorkflowControlledException $e) {
                 $activityResult['result'] = $e;
             } catch (\Throwable $e) {
-                $exception = $e;
+                $exception                   = $e;
                 $activityResult['backtrace'] = $e->getTrace();
             }
         }
 
         $activityResult['finished_at'] = now()->getTimestampMs();
-        $this->activityResults[] = $activityResult;
+        $this->activityResults[]       = $activityResult;
         $this->callHook('onRegisterActivity', $activityResult);
 
         if ($exception) {
@@ -226,7 +241,8 @@ final class SyncExecutor
     public function runChainedActivities(
         array $activities,
         mixed $mainParam = null,
-    ): mixed {
+    ): mixed
+    {
         foreach ($activities as $activity) {
 
             if ($activity instanceof SyncChainedActivity) {
@@ -245,7 +261,8 @@ final class SyncExecutor
                     $activity->getActivity(),
                     $activity->getStaticParam() === SyncChainedActivity::UNDEFINED_PARAM_VALUE ? [$mainParam] : array_merge([$mainParam], [$activity->getStaticParam()]),
                     $activity->getStopOnFail(),
-                    $activity->getOnFail()
+                    $activity->getOnFail(),
+                    $activity->getDecoupled(),
                 );
             } else {
                 $mainParam = $this->runActivity(
@@ -269,17 +286,17 @@ final class SyncExecutor
 
         // Ensure the class has a constructor
         $constructor = $reflector->getConstructor();
-        if (! $constructor) {
+        if (!$constructor) {
             throw new \Exception("No constructor found for class $className");
         }
 
         // Get the parameters of the constructor
-        $parameters = $constructor->getParameters();
+        $parameters   = $constructor->getParameters();
         $capturedArgs = [];
 
         // Map the parameters to the passed arguments
         foreach ($parameters as $index => $parameter) {
-            $name = $parameter->getName();
+            $name                = $parameter->getName();
             $capturedArgs[$name] = $args[$index] ?? null; // Capture value or null if not provided
         }
 
@@ -292,7 +309,7 @@ final class SyncExecutor
     private function callHook(string $method, mixed ...$params): void
     {
         foreach ($this->features as $feature) {
-            $methodName = $method.ucfirst($feature);
+            $methodName = $method . ucfirst($feature);
             $this->{$methodName}($params);
         }
     }

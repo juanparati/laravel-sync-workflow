@@ -13,16 +13,27 @@ final class SyncChainedActivity
 
     /**
      * Chained Activity.
+     *
+     * @param string|\Closure $activity SyncActivity class or closure
+     * @param mixed $staticParam Static parameter passed to activity
+     * @param bool $stopOnFail Stop entire workflow if activity fails
+     * @param \Closure|null $onFail Callback on fail
+     * @param \Closure|bool $when Condition to execute activity
+     * @param bool $decoupled Clone objects passed into parameters
+     *
      */
     public function __construct(
         protected string|\Closure $activity,
-        protected mixed $staticParam = self::UNDEFINED_PARAM_VALUE,
-        protected bool $stopOnFail = true,
-        protected ?\Closure $onFail = null,
-        protected \Closure|bool $when = true,
-    ) {}
+        protected mixed           $staticParam = self::UNDEFINED_PARAM_VALUE,
+        protected bool            $stopOnFail = true,
+        protected ?\Closure       $onFail = null,
+        protected \Closure|bool   $when = true,
+        protected bool            $decoupled = true,
+    )
+    {
+    }
 
-    public function getActivity(): string
+    public function getActivity(): string|\Closure
     {
         return $this->activity;
     }
@@ -65,5 +76,10 @@ final class SyncChainedActivity
     public function getWhen(): \Closure|bool
     {
         return $this->when;
+    }
+
+    public function getDecoupled(): bool
+    {
+        return $this->decoupled;
     }
 }

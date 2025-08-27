@@ -27,42 +27,4 @@ abstract class SyncWorkflow implements Workflow
 
         return $this->_executor;
     }
-
-
-    /**
-     * Wrapper for runChainedActivities.
-     *
-     * @param array $activities
-     * @param mixed|null $mainParam
-     * @return mixed
-     * @throws \ReflectionException
-     * @throws \Throwable
-     */
-    final public function runChainedActivities(array $activities, mixed $mainParam = null): mixed
-    {
-        return $this->executor()->runChainedActivities($activities, $mainParam);
-    }
-
-
-    /**
-     * Wrapper for runActivity.
-     *
-     * @param string|\Closure $activityClass
-     * @param array $params
-     * @param bool $stopOnFail
-     * @param \Closure|null $onFail
-     * @return mixed
-     * @throws \ReflectionException
-     * @throws \Throwable
-     */
-    final public function runActivity(
-        string|\Closure $activityClass,
-        array $params = [],
-        bool $stopOnFail = true,
-        ?\Closure $onFail = null
-    ): mixed
-    {
-        return $this->executor()->runActivity($activityClass, $params, $stopOnFail, $onFail);
-    }
-
 }

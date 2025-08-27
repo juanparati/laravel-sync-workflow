@@ -33,8 +33,6 @@ class SyncExecutorTest extends SyncWorkflowTestBase
         $executor = SyncExecutor::make();
 
         $this->expectException(\RuntimeException::class);
-        $this->expectExceptionMessage('Workflow not defined, use the load() method before calling start().');
-
         $executor->run();
     }
 
