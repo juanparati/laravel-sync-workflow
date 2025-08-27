@@ -13,7 +13,7 @@ class ControllerExceptionTest extends SyncWorkflowTestBase
     {
         $e = SyncExecutor::make()
             ->load(new TestControlledExceptionWorkflow)
-            ->start()
+            ->run()
             ->getResult();
 
         $this->assertInstanceOf(SyncWorkflowControlledException::class, $e);

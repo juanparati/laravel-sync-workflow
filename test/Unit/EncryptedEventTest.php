@@ -21,7 +21,7 @@ class EncryptedEventTest extends SyncWorkflowTestBase
 
         $result = SyncExecutor::make()
             ->load($testWorkflow)
-            ->start()
+            ->run()
             ->getResult();
 
         $this->assertEquals(8, $result);

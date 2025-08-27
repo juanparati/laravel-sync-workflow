@@ -13,7 +13,7 @@ class ActivityTest extends SyncWorkflowTestBase
     {
         $result = SyncExecutor::make()
             ->load(new TestWorkflow(1))
-            ->start()
+            ->run()
             ->getResult();
 
         $this->assertEquals(2, $result);
@@ -23,7 +23,7 @@ class ActivityTest extends SyncWorkflowTestBase
     {
         $result = SyncExecutor::make()
             ->load(new TestActivitiesWorkflow(2))
-            ->start()
+            ->run()
             ->getResult();
 
         $this->assertEquals(5, $result);

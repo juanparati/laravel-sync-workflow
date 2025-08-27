@@ -21,7 +21,7 @@ class EventSourceTest extends SyncWorkflowTestBase
 
         $result = SyncExecutor::make()
             ->load($testWorkflow)
-            ->start()
+            ->run()
             ->getResult();
 
         $this->assertEquals(6, $result);
@@ -41,7 +41,7 @@ class EventSourceTest extends SyncWorkflowTestBase
 
         $result = SyncExecutor::make()
             ->load($testWorkflow)
-            ->start()
+            ->run()
             ->getResult();
 
         sleep(2);
@@ -61,7 +61,7 @@ class EventSourceTest extends SyncWorkflowTestBase
 
         $e = SyncExecutor::make()
             ->load($workflow)
-            ->start()
+            ->run()
             ->getResult();
 
         $this->assertInstanceOf(SyncWorkflowControlledException::class, $e);

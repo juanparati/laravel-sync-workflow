@@ -51,7 +51,7 @@ class SyncWorkflowState extends Model
 
         return SyncExecutor::make($this->id)
             ->load($this->instance)
-            ->start();
+            ->run();
     }
 
     protected function instance(): Attribute

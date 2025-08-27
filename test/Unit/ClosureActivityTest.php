@@ -13,7 +13,7 @@ class ClosureActivityTest extends SyncWorkflowTestBase
     {
         $result = SyncExecutor::make()
             ->load(new ClosureTestWorkflow('foo'))
-            ->start()
+            ->run()
             ->getResult();
 
         $this->assertEquals('testfoo', $result);
@@ -23,7 +23,7 @@ class ClosureActivityTest extends SyncWorkflowTestBase
     {
         $result = SyncExecutor::make()
             ->load(new ClosureActivitiesTestWorkflow('foo'))
-            ->start()
+            ->run()
             ->getResult();
 
         $this->assertEquals('testfoo', $result);

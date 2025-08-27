@@ -17,7 +17,7 @@ trait HasEventSourcing
     /**
      * Runs when the workflow starts.
      */
-    protected function onStartHasEventSourcing(): void
+    protected function onRunHasEventSourcing(): void
     {
         $this->workflowState = SyncWorkflowState::findOrNew($this->workflowId);
         $this->workflowState->first_started_at = $this->workflowState->first_started_at ?: $this->startedAt;

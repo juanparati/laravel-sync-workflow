@@ -80,7 +80,7 @@ final class SyncExecutor
      *
      * @return $this
      */
-    public function start(): SyncExecutor
+    public function run(): SyncExecutor
     {
         if (! $this->workflow) {
             throw new \RuntimeException('Workflow not defined, use the load() method before calling start().');
@@ -91,7 +91,7 @@ final class SyncExecutor
         }
 
         $this->startedAt = now()->toImmutable();
-        $this->callHook('onStart');
+        $this->callHook('onRun');
         $this->workflow->executor($this);
         $this->finalResult = $this->workflow->handle();
         $this->endedAt = now()->toImmutable();
@@ -263,7 +263,7 @@ final class SyncExecutor
      *
      * @throws \ReflectionException
      */
-    public static function captureConstructorArgs(string $className, ...$args): array
+    protected static function captureConstructorArgs(string $className, ...$args): array
     {
         $reflector = new \ReflectionClass($className);
 

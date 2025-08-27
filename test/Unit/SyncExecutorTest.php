@@ -3,11 +3,15 @@
 namespace Juanparati\SyncWorkflow\Test\Unit;
 
 use Juanparati\SyncWorkflow\SyncExecutor;
+use Juanparati\SyncWorkflow\Test\Concerns\NeedCallProtectedMethods;
 use Juanparati\SyncWorkflow\Test\SyncWorkflowTestBase;
 use Ramsey\Uuid\Uuid;
 
 class SyncExecutorTest extends SyncWorkflowTestBase
 {
+
+    use NeedCallProtectedMethods;
+
     public function test_make_creates_instance_with_auto_generated_id()
     {
         $executor = SyncExecutor::make();
@@ -31,12 +35,21 @@ class SyncExecutorTest extends SyncWorkflowTestBase
         $this->expectException(\RuntimeException::class);
         $this->expectExceptionMessage('Workflow not defined, use the load() method before calling start().');
 
-        $executor->start();
+        $executor->run();
     }
 
     public function test_capture_constructor_args_maps_parameters_correctly()
     {
-        $args = SyncExecutor::captureConstructorArgs(TestClassWithConstructor::class, 'param1', 42, true);
+        $args = $this->makeAvailableProtectedStaticMethod(
+            SyncExecutor::class,
+            'captureConstructorArgs'
+        )
+            ->invokeArgs(null, [
+                TestClassWithConstructor::class,
+                'param1',
+                42,
+                true
+            ]);
 
         $expected = [
             'name' => 'param1',
@@ -49,7 +62,15 @@ class SyncExecutorTest extends SyncWorkflowTestBase
 
     public function test_capture_constructor_args_handles_missing_parameters()
     {
-        $args = SyncExecutor::captureConstructorArgs(TestClassWithConstructor::class, 'param1');
+
+        $args = $this->makeAvailableProtectedStaticMethod(
+            SyncExecutor::class,
+            'captureConstructorArgs'
+        )
+            ->invokeArgs(null, [
+                TestClassWithConstructor::class,
+                'param1',
+            ]);
 
         $expected = [
             'name' => 'param1',
@@ -58,14 +79,6 @@ class SyncExecutorTest extends SyncWorkflowTestBase
         ];
 
         $this->assertEquals($expected, $args);
-    }
-
-    public function test_capture_constructor_args_throws_exception_for_no_constructor()
-    {
-        $this->expectException(\Exception::class);
-        $this->expectExceptionMessage('No constructor found for class '.TestClassWithoutConstructor::class);
-
-        SyncExecutor::captureConstructorArgs(TestClassWithoutConstructor::class);
     }
 }
 

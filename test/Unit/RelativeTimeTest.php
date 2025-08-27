@@ -12,7 +12,7 @@ class RelativeTimeTest extends SyncWorkflowTestBase
     {
         $result = SyncExecutor::make()
             ->load(new TestRelativeTimeWorkflow)
-            ->start()
+            ->run()
             ->getResult();
 
         $this->assertEquals(now()->toDateTimeString(), $result->toDateTimeString());
