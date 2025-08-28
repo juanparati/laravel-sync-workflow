@@ -68,6 +68,21 @@ final class SyncExecutor
         return new self($workflowId);
     }
 
+    /**
+     * Dispatch a workflow.
+     *
+     * @param Workflow $workflow
+     * @param string|null $workflowId
+     * @return mixed
+     */
+    public static function dispatch(Workflow $workflow, ?string $workflowId = null): mixed
+    {
+        return self::make($workflowId)
+            ->load($workflow)
+            ->run()
+            ->getResult();
+    }
+
     public function load(Workflow $workflow): self
     {
         $this->workflow = $workflow;
