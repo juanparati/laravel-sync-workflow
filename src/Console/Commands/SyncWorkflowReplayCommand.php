@@ -23,8 +23,8 @@ class SyncWorkflowReplayCommand extends Command
             return -1;
         }
 
-        if (!$this->option('force') && $state->was_successful) {
-            $this->error('Workflow was successful executed.');
+        if ($state->was_success && !$this->option('force')) {
+            $this->error('Workflow was already successfully executed.');
             return -1;
         }
 
