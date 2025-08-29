@@ -1,0 +1,14 @@
+namespace {{ namespace }}
+
+use Juanparati\SyncWorkflow\SyncActivity;
+
+class {{ class }} extend SyncActivity
+{
+    /**
+     * Handle the workflow
+     */
+    public function handle()
+    {
+        // TODO: Implement your service logic here.
+    }
+}

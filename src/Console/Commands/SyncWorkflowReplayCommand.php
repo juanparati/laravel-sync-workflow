@@ -6,7 +6,6 @@ use Illuminate\Console\Command;
 use Juanparati\SyncWorkflow\Exceptions\SyncWorkflowControlledException;
 use Juanparati\SyncWorkflow\Models\SyncWorkflowState;
 use Juanparati\SyncWorkflow\SyncExecutor;
-use Juanparati\SyncWorkflow\Test\Fixtures\Workflows\GenericActivities\ControlledExceptionActivity;
 
 class SyncWorkflowReplayCommand extends Command
 {

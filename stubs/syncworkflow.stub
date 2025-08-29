@@ -1,0 +1,15 @@
+namespace {{ namespace }}
+
+use Juanparati\SyncWorkflow\Contracts\WithEventSourcing;
+use Juanparati\SyncWorkflow\SyncWorkflow;
+
+class {{ class }} extend SyncWorkflow {{ implements }}
+{
+    /**
+     * Handle the workflow
+     */
+    public function handle()
+    {
+        // TODO: Implement your service logic here.
+    }
+}

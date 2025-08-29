@@ -36,6 +36,12 @@ class SyncWorkflowProvider extends ServiceProvider
                 __DIR__.'/../../config/sync-workflow.php' => config_path('sync-workflow.php'),
                 __DIR__.'/../../database/migrations' => database_path('migrations'),
             ], 'laravel-sync-workflow');
+
+            // Optionally, you can create a separate tag for stubs
+            $this->publishes([
+                __DIR__.'/../../stubs' => base_path('stubs/vendor/sync-workflow'),
+            ], 'laravel-sync-workflow-stubs');
+
         }
     }
 }
