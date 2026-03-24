@@ -1,3 +1,5 @@
+![test](https://github.com/juanparati/laravel-sync-workflow/actions/workflows/on_push.yml/badge.svg)
+
 # Laravel Synchronous Workflows
 
 A robust library for executing reproducible synchronous workflows with seamless event sourcing capabilities in Laravel.
