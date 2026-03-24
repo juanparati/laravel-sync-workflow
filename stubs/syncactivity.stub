@@ -1,14 +1,16 @@
-namespace {{ namespace }}
+<?php
+
+namespace {{ namespace }};
 
 use Juanparati\SyncWorkflow\SyncActivity;
 
-class {{ class }} extend SyncActivity
+class {{ class }} extends SyncActivity
 {
     /**
-     * Handle the workflow
+     * Handle the activity
      */
     public function handle()
     {
-        // TODO: Implement your service logic here.
+        // TODO: Implement your activity logic here.
     }
 }

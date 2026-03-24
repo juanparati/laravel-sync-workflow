@@ -9,7 +9,7 @@ use Illuminate\Console\Command;
 abstract class SyncWorkflowMakeCommandBase extends Command
 {
 
-    protected string $stub;
+    protected string $stubName;
 
     /**
      * The filesystem instance.
@@ -23,20 +23,20 @@ abstract class SyncWorkflowMakeCommandBase extends Command
     }
 
 
-    protected function publish(string $name, string $dir) : void {
-        $path = app_path($name . DIRECTORY_SEPARATOR . $dir . '.php');
+    protected function publish(string $baseDir, string $name) : void {
+        $path = app_path($baseDir . DIRECTORY_SEPARATOR . $name . '.php');
 
         // Ensure the directory exists
         $this->files->makeDirectory(dirname($path), 0777, true, true);
 
         // Get stub content
-        $stub = $this->files->exists(base_path('stubs/vendor/sync-workflow/workflow.stub'))
-            ? $this->files->get(base_path('stubs/vendor/sync-workflow/workflow.stub'))
-            : $this->files->get(__DIR__.'/../../../stubs/workflow.stub');
+        $stub = $this->files->exists(base_path('stubs/vendor/sync-workflow/' . $this->stubName))
+            ? $this->files->get(base_path('stubs/vendor/sync-workflow/' . $this->stubName))
+            : $this->files->get(__DIR__.'/../../../stubs/' . $this->stubName);
 
-        $this->files->put($path, $this->replaceSubs($stub, $name, $dir));
+        $this->files->put($path, $this->replaceSubs($stub, $baseDir, $name));
     }
 
 
-    abstract protected function replaceSubs(string $stub, string $name, string $dir) : string;
+    abstract protected function replaceSubs(string $stub, string $baseDir, string $name) : string;
 }

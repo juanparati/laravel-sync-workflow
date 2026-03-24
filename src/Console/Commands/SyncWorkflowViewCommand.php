@@ -16,7 +16,7 @@ class SyncWorkflowViewCommand extends Command
         if (! ($state = SyncWorkflowState::find($this->argument('id')))) {
             $this->error('Workflow state not found.');
 
-            return -1;
+            return self::FAILURE;
         }
 
         $this->output->title('Workflow state: ' . $state->id);

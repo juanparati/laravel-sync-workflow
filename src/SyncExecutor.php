@@ -237,7 +237,7 @@ final class SyncExecutor
                     $onFail($exception, $activityResult);
                 }
 
-                $this->endedAt = now();
+                $this->endedAt = now()->toImmutable();
 
                 $this->callHook('onRunActivityFail');
                 throw $exception;
@@ -325,7 +325,7 @@ final class SyncExecutor
     {
         foreach ($this->features as $feature) {
             $methodName = $method . ucfirst($feature);
-            $this->{$methodName}($params);
+            $this->{$methodName}(...$params);
         }
     }
 }

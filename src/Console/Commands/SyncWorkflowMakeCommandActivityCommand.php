@@ -3,20 +3,15 @@
 namespace Juanparati\SyncWorkflow\Console\Commands;
 
 
-use Illuminate\Filesystem\Filesystem;
-
 class SyncWorkflowMakeCommandActivityCommand extends SyncWorkflowMakeCommandBase
 {
     protected $signature = 'make:sync-workflow-activity {activity}
-        {--workflow-dir=SyncWorkflows : Base path for workflow files}            
+        {--workflow-dir=SyncWorkflows : Base path for workflow files}
     ';
 
     protected $description = 'Create activity file';
 
-    public function __construct() {
-        parent::__construct();
-        $this->files = new Filesystem();
-    }
+    protected string $stubName = 'syncactivity.stub';
 
     public function handle()
     {
@@ -28,18 +23,26 @@ class SyncWorkflowMakeCommandActivityCommand extends SyncWorkflowMakeCommandBase
         $this->info('Activity created successfully.');
     }
 
-    protected function replaceSubs(string $stub, string $name, string $dir): string
+    protected function replaceSubs(string $stub, string $baseDir, string $name): string
     {
-        // Replace stub variables
-        $stub = str_replace(
+        $namespace = 'App\\' . str_replace('/', '\\', $baseDir);
+
+        // Handle nested names like "MyWorkflow/MyFirstActivity"
+        if (str_contains($name, '/')) {
+            $parts = explode('/', $name);
+            $className = array_pop($parts);
+            $namespace .= '\\' . implode('\\', $parts);
+        } else {
+            $className = $name;
+        }
+
+        return str_replace(
             ['{{ namespace }}', '{{ class }}'],
             [
-                'App\\' . str_replace('/', '\\', $dir),
-                $name,
+                $namespace,
+                $className,
             ],
             $stub
         );
-
-        return $stub;
     }
 }

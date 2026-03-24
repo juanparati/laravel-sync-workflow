@@ -29,7 +29,7 @@ class SyncWorkflowControlledException extends \Exception
         return $this->errors;
     }
 
-    public function addError(string $error): static
+    public function addError(mixed $error): static
     {
         $this->errors[] = $error;
 

@@ -1,9 +1,11 @@
-namespace {{ namespace }}
+<?php
+
+namespace {{ namespace }};
 
 use Juanparati\SyncWorkflow\Contracts\WithEventSourcing;
 use Juanparati\SyncWorkflow\SyncWorkflow;
 
-class {{ class }} extend SyncWorkflow {{ implements }}
+class {{ class }} extends SyncWorkflow {{ implements }}
 {
     /**
      * Handle the workflow

@@ -7,10 +7,12 @@ class SyncWorkflowMakeCommandCommand extends SyncWorkflowMakeCommandBase
 {
     protected $signature = 'make:sync-workflow {workflow}
         {--event-sourcing : Add event sourcing support}
-        {--workflow-dir=SyncWorkflows : Base path for workflow files}            
+        {--workflow-dir=SyncWorkflows : Base path for workflow files}
     ';
 
     protected $description = 'Create workflow file';
+
+    protected string $stubName = 'syncworkflow.stub';
 
 
     public function handle()
@@ -23,19 +25,27 @@ class SyncWorkflowMakeCommandCommand extends SyncWorkflowMakeCommandBase
         $this->info('Workflow created successfully.');
     }
 
-    protected function replaceSubs(string $stub, string $name, string $dir): string
+    protected function replaceSubs(string $stub, string $baseDir, string $name): string
     {
-        // Replace stub variables
-        $stub = str_replace(
+        $namespace = 'App\\' . str_replace('/', '\\', $baseDir);
+
+        // Handle nested names like "SubDir/MyWorkflow"
+        if (str_contains($name, '/')) {
+            $parts = explode('/', $name);
+            $className = array_pop($parts);
+            $namespace .= '\\' . implode('\\', $parts);
+        } else {
+            $className = $name;
+        }
+
+        return str_replace(
             ['{{ namespace }}', '{{ class }}', '{{ implements }}'],
             [
-                'App\\' . str_replace('/', '\\', $dir),
-                $name,
-                $this->option('event-sourcing') ? 'implements WithEventSourcing' : ''
+                $namespace,
+                $className,
+                $this->option('event-sourcing') ? 'implements WithEventSourcing' : '',
             ],
             $stub
         );
-
-        return $stub;
     }
 }

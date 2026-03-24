@@ -19,12 +19,12 @@ class SyncWorkflowReplayCommand extends Command
     {
         if (!($state = SyncWorkflowState::find($this->argument('id')))) {
             $this->error('Workflow state not found.');
-            return -1;
+            return self::FAILURE;
         }
 
         if ($state->was_success && !$this->option('force')) {
             $this->error('Workflow was already successfully executed.');
-            return -1;
+            return self::FAILURE;
         }
 
         $executor = SyncExecutor::make($this->argument('id'))->load($state->instance);
@@ -39,7 +39,7 @@ class SyncWorkflowReplayCommand extends Command
             return 0;
         } catch (\Exception $e) {
             $this->error($e->getMessage());
-            return -1;
+            return self::FAILURE;
         }
 
         $this->output->success('Workflow finished successfully.');

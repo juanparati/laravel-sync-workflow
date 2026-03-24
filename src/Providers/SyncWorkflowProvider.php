@@ -5,6 +5,8 @@ declare(strict_types=1);
 namespace Juanparati\SyncWorkflow\Providers;
 
 use Illuminate\Support\ServiceProvider;
+use Juanparati\SyncWorkflow\Console\Commands\SyncWorkflowMakeCommandActivityCommand;
+use Juanparati\SyncWorkflow\Console\Commands\SyncWorkflowMakeCommandCommand;
 use Juanparati\SyncWorkflow\Console\Commands\SyncWorkflowReplayCommand;
 use Juanparati\SyncWorkflow\Console\Commands\SyncWorkflowViewCommand;
 
@@ -28,6 +30,8 @@ class SyncWorkflowProvider extends ServiceProvider
         if ($this->app->runningInConsole()) {
 
             $this->commands([
+                SyncWorkflowMakeCommandCommand::class,
+                SyncWorkflowMakeCommandActivityCommand::class,
                 SyncWorkflowReplayCommand::class,
                 SyncWorkflowViewCommand::class,
             ]);
