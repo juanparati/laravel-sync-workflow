@@ -14,7 +14,7 @@
     "require": {
         "php": ">=8.3",
         "ext-pdo": "*",
-        "illuminate/support": ">=11.1",
+        "illuminate/support": "^12",
         "ramsey/uuid": "^4.7"
     },
     "require-dev": {
