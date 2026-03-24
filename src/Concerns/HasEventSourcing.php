@@ -20,6 +20,7 @@ trait HasEventSourcing
     protected function onRunHasEventSourcing(): void
     {
         $this->workflowState = SyncWorkflowState::findOrNew($this->workflowId);
+        $this->workflowState->id = $this->workflowId;
         $this->workflowState->first_started_at = $this->workflowState->first_started_at ?: $this->startedAt;
         $this->workflowState->started_at = $this->startedAt;
         $this->workflowState->workflow = get_class($this->workflow);
@@ -71,8 +72,8 @@ trait HasEventSourcing
         $relativeTime = $this->startedAt;
 
         if ($this->workflowState) {
-            $relativeTime = $this->startedAt->addMicroseconds(
-                now()->diffInMicroseconds($this->workflowState->first_started_at)
+            $relativeTime = $this->workflowState->first_started_at->addMicroseconds(
+                now()->diffInMicroseconds($this->startedAt)
             );
         }
 
