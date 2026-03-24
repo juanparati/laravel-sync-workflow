@@ -15,6 +15,8 @@ Key features include:
 - Workflow replay functionality
 - Automatic object reference decoupling
 - Relative time management
+- Unique workflow locking
+- Controlled exceptions for graceful workflow halting
 
 This library is inspired by [Laravel Workflow](https://github.com/laravel-workflow/laravel-workflow) and [Laravel Saga](https://github.com/laravel-sagas/laravel-sagas).
 
@@ -51,19 +53,17 @@ namespace App\SyncWorkflows;
 
 use App\SyncWorkflows\UserRegistration\SendWelcomeEmail;
 use App\SyncWorkflows\UserRegistration\CreateUserProfile;
-use Juanparati\SyncWorkflows\SyncWorkflow;
+use Juanparati\SyncWorkflow\SyncWorkflow;
 
 class UserRegistrationWorkflow extends SyncWorkflow
 {
-
     protected User $user;
 
     public function __construct(User|array $user)
     {
         $this->user = $user instanceof User ? $user : new User($user);
-    } 
-    
-    
+    }
+
     public function handle()
     {
         // Create user profile
@@ -92,8 +92,8 @@ namespace App\SyncWorkflows;
 
 use App\SyncWorkflows\UserRegistration\SendWelcomeEmail;
 use App\SyncWorkflows\UserRegistration\CreateUserProfile;
-use Juanparati\SyncWorkflows\Contracts\WithEventSourcing;
-use Juanparati\SyncWorkflows\SyncWorkflow;
+use Juanparati\SyncWorkflow\Contracts\WithEventSourcing;
+use Juanparati\SyncWorkflow\SyncWorkflow;
 
 // When implementing WithEventSourcing, the workflow will be persisted in the database
 // and its execution history will be available for replay.
@@ -129,14 +129,13 @@ Activities contain the actual business logic:
 namespace App\SyncWorkflows\UserRegistration;
 
 use App\Models\User;
-use Juanparati\SyncWorkflows\SyncActivity;
+use Juanparati\SyncWorkflow\SyncActivity;
 
 class CreateUserProfile extends SyncActivity
 {
+    public function __construct(protected User $user) {}
 
-    public function __construct(protected User $user);
-    
-    public function execute()
+    public function handle()
     {   
         // Use relativeNow instead of now() to ensure consistent timestamps during workflow replay
         // by preserving the original execution time.
@@ -154,7 +153,7 @@ class CreateUserProfile extends SyncActivity
 Execute a workflow programmatically:
 
 ```php
-use Juanparati\SyncWorkflows\SyncExecutor;
+use Juanparati\SyncWorkflow\SyncExecutor;
 
 $result = SyncExecutor::dispatch(
     new UserRegistrationWorkflow(['email' => 'user@example.com', 'name' => 'John Doe'])
@@ -167,7 +166,7 @@ echo "User registered with ID: " . $result->id;
 or alternatively:
 
 ```php
-use Juanparati\SyncWorkflows\SyncExecutor;
+use Juanparati\SyncWorkflow\SyncExecutor;
 
 $workflow = SyncExecutor::make()
     ->load(new UserRegistrationWorkflow(['email' => 'user@example.com', 'name' => 'John Doe']));
@@ -193,14 +192,14 @@ To gracefully halt workflow execution, you can throw a `SyncWorkflowControlledEx
 
 namespace App\SyncWorkflows\OrderProcessing;
 
-use Juanparati\SyncWorkflows\Exceptions\SyncWorkflowControlledException;
-use Juanparati\SyncWorkflows\SyncActivity;
+use Juanparati\SyncWorkflow\Exceptions\SyncWorkflowControlledException;
+use Juanparati\SyncWorkflow\SyncActivity;
 use App\Services\PaymentService;
 use Exception;
 
 class ValidatePayment extends SyncActivity
 {
-    public function execute()
+    public function handle()
     {   
         $paymentPermission = PaymentService::obtainPermission($this->input);
         
@@ -227,10 +226,39 @@ try {
 }
 ```
 
+### Workflow locking
 
-### Commands
+Use the `HasLock` trait to automatically acquire a lock before executing a workflow:
 
-#### Generate a new workflow
+```php
+<?php
+
+namespace App\SyncWorkflows;
+
+use App\SyncWorkflows\UserRegistration\SendWelcomeEmail;
+use App\SyncWorkflows\UserRegistration\CreateUserProfile;
+use Juanparati\SyncWorkflow\Concerns\HasLock;
+use Juanparati\SyncWorkflow\SyncWorkflow;
+
+class UserRegistrationWorkflow extends SyncWorkflow
+{
+    use HasLock;
+
+    protected function uniqueId() {
+        return 'my_lock_key';
+    }
+    ...
+}
+```
+
+Use the `uniqueId` method to define a unique identifier for the workflow, otherwise the class name is used by default.
+
+When the lock was already acquired by another workflow the exception `SyncWorkflowLockException` is thrown.
+
+
+## Commands
+
+### Generate a new workflow
 
 ```sh
 artisan make:sync-workflow MyWorkflow
@@ -238,19 +266,19 @@ artisan make:sync-workflow MyWorkflow
 
 The workflow will be created in the `app/SyncWorkflows` directory.
 
-#### Generate a new activity
+### Generate a new activity
 
 ```sh
 artisan make:sync-workflow-activity MyWorkflow/MyFirstActivity
 ```
 
-#### Replay a workflow
+### Replay a workflow
 
 ```sh
 artisan sync-workflow:replay [workflow-id]
 ```
 
-#### View workflow state
+### View workflow state
 
 ```sh
 artisan sync-workflow:view [workflow-id]
