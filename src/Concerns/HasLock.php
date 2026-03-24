@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Juanparati\SyncWorkflow\Concerns;
 
 use Illuminate\Contracts\Cache\Lock;
+use Illuminate\Support\Facades\Cache;
 use Juanparati\SyncWorkflow\Exceptions\SyncWorkflowLockException;
 
 /**
@@ -34,7 +35,7 @@ trait HasLock
             $uniqueId = $this->uniqueId();
         }
 
-        $this->lock = cache()->lock($uniqueId, $this->lockTime);
+        $this->lock = Cache::lock($uniqueId, $this->lockTime);
 
         if (!$this->lock->get()) {
             throw new SyncWorkflowLockException('Could not obtain lock');
