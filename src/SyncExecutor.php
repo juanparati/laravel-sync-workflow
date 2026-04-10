@@ -10,6 +10,7 @@ use Juanparati\SyncWorkflow\Contracts\WithEventSourcing;
 use Juanparati\SyncWorkflow\Contracts\Workflow;
 use Juanparati\SyncWorkflow\Exceptions\SyncWorkflowControlledException;
 use Ramsey\Uuid\Nonstandard\Uuid;
+use ReflectionClass;
 
 final class SyncExecutor
 {
@@ -177,7 +178,7 @@ final class SyncExecutor
 
         if ($decoupled) {
             $params = array_map(
-                fn ($param) => is_object($param) ? clone $param : $param,
+                fn ($param) => is_object($param) ? (static::isCloneable($param) ? clone $param : $param) : $param,
                 $params
             );
         }
@@ -316,6 +317,13 @@ final class SyncExecutor
         }
 
         return $capturedArgs;
+    }
+
+    /**
+     * Check if an object is cloneable.
+     */
+    protected static function isCloneable(object $obj): bool {
+        return (new ReflectionClass($obj))->isCloneable();
     }
 
     /**
